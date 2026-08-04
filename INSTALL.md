@@ -78,8 +78,8 @@ KS_PASS=你的密码 ./build-apk.sh https://你的域名/manifest.webmanifest
 ---
 
 ## 卸载与数据备份
-- 卸载 PWA 或 APK 会**清除本机 localStorage 数据**，卸载前请到「我的 → 导出备份文件」生成 JSON 备份。
-- 重新安装后可用「从备份恢复」（支持合并 / 覆盖导入）。
+- 卸载 PWA 或 APK 会**清除本机 localStorage 数据**，卸载前请到「我的 → 导出备份文件」生成 Excel 备份(.xlsx)。
+- 重新安装后可用「从备份恢复」（支持 Excel / JSON，覆盖 / 合并导入）。
 
 ---
 

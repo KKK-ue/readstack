@@ -335,13 +335,80 @@
     return res;
   }
 
+  /* ---------------- 备份标签映射（Excel 中文可读） ---------------- */
+  var STATUS_K2L = { unread: '未读', reading: '在读', done: '已读', drop: '弃读' };
+  var STATUS_L2K = { '未读': 'unread', '在读': 'reading', '已读': 'done', '弃读': 'drop' };
+  var SOURCE_K2L = { paper: '纸质', ebook: '电子', audio: '有声' };
+  var SOURCE_L2K = { '纸质': 'paper', '电子': 'ebook', '有声': 'audio' };
+  function isoDateOf(ts) {
+    if (!ts) return '';
+    try { var d = new Date(ts); return isNaN(d.getTime()) ? String(ts) : d.toISOString(); } catch (e) { return String(ts); }
+  }
+  function parseDateOf(s) {
+    if (!s) return Date.now();
+    var n = Date.parse(s);
+    return isNaN(n) ? Date.now() : n;
+  }
+  function splitTags(s) {
+    if (!s) return [];
+    return String(s).split(/[、,，;；]/).map(function (t) { return t.trim(); }).filter(function (t) { return t; });
+  }
+  function excerptsToStr(exs) {
+    return (exs || []).map(function (e) {
+      return (e.text || '') + (e.page ? '（P' + e.page + '）' : '');
+    }).join('\n');
+  }
+  function parseExcerpts(s) {
+    if (!s) return [];
+    return String(s).split('\n').map(function (line) {
+      var m = /^([\s\S]*?)\s*[（(]P?\.?\s*([^）)]+)[）)]\s*$/.exec(line);
+      if (m) return { id: uid('ex'), text: m[1].trim(), page: m[2].trim(), createdAt: Date.now() };
+      var t = line.trim();
+      return t ? { id: uid('ex'), text: t, page: '', createdAt: Date.now() } : null;
+    }).filter(Boolean);
+  }
+
   /* ---------------- 备份 / 恢复 ---------------- */
+  var STOCK_HEAD = ['序号', '书名', '作者', '分类', '出版社', '价格', '页数', '状态', '购入日期', '标签', '备注', '创建时间'];
+  var READ_HEAD = ['序号', '书名', '作者', '分类', '来源', '开始日期', '读完日期', '评分', '读后感', '摘抄', '备注', '创建时间'];
+  function rowToStock(r) {
+    r = r || [];
+    return {
+      title: r[1] || '', author: r[2] || '', category: r[3] || '其他', publisher: r[4] || '',
+      price: Number(r[5]) || 0, pages: Number(r[6]) || 0,
+      status: STATUS_L2K[r[7]] || 'unread', purchaseDate: r[8] || '',
+      tags: splitTags(r[9]), note: r[10] || '', createdAt: parseDateOf(r[11])
+    };
+  }
+  function rowToReading(r) {
+    r = r || [];
+    return {
+      title: r[1] || '', author: r[2] || '', category: r[3] || '其他',
+      source: SOURCE_L2K[r[4]] || 'paper', startDate: r[5] || '', finishDate: r[6] || '',
+      rating: Number(r[7]) || 0, reflection: r[8] || '', excerpts: parseExcerpts(r[9]),
+      note: r[10] || '', createdAt: parseDateOf(r[11])
+    };
+  }
   var Backup = {
     export: function () {
       return JSON.stringify({
         app: 'ReadStack', version: 1, exportedAt: new Date().toISOString(),
         stock: Stock.all(), reading: Reading.all()
       });
+    },
+    exportExcel: function () {
+      var stock = [STOCK_HEAD].concat(Stock.all().map(function (b, i) {
+        return [i + 1, b.title, b.author, b.category, b.publisher, b.price, b.pages,
+          STATUS_K2L[b.status] || b.status, b.purchaseDate, (b.tags || []).join('、'), b.note, isoDateOf(b.createdAt)];
+      }));
+      var reading = [READ_HEAD].concat(Reading.all().map(function (b, i) {
+        return [i + 1, b.title, b.author, b.category, SOURCE_K2L[b.source] || b.source,
+          b.startDate, b.finishDate, b.rating, b.reflection, excerptsToStr(b.excerpts), b.note, isoDateOf(b.createdAt)];
+      }));
+      return RS.XLSX.write([
+        { name: '藏书台账', rows: stock },
+        { name: '已读清单', rows: reading }
+      ]);
     },
     import: function (json, mode) {
       var data = JSON.parse(json);
@@ -354,6 +421,29 @@
         Reading.all().forEach(function (b) { exR[b.id] = 1; });
         Stock.save(Stock.all().concat(sk.filter(function (b) { return !exS[b.id]; })));
         Reading.save(Reading.all().concat(rd.filter(function (b) { return !exR[b.id]; })));
+      } else {
+        Stock.save(sk); Reading.save(rd);
+      }
+      Meta.set('lastBackup', Date.now());
+      return { stock: sk.length, reading: rd.length };
+    },
+    importExcel: function (buf, mode) {
+      var sheets = RS.XLSX.read(buf);
+      var stockSheet = null, readingSheet = null;
+      sheets.forEach(function (s) {
+        if (s.name === '藏书台账') stockSheet = s;
+        else if (s.name === '已读清单') readingSheet = s;
+      });
+      var sk = stockSheet ? stockSheet.rows.slice(1).map(rowToStock).filter(function (b) { return b.title; }) : [];
+      var rd = readingSheet ? readingSheet.rows.slice(1).map(rowToReading).filter(function (b) { return b.title; }) : [];
+      var key = function (b) { return (b.title || '') + ' ' + (b.author || ''); };
+      if (mode === 'merge') {
+        var seen = {}; RS.Stock.all().forEach(function (b) { seen[key(b)] = 1; });
+        sk = sk.filter(function (b) { return !seen[key(b)]; });
+        seen = {}; RS.Reading.all().forEach(function (b) { seen[key(b)] = 1; });
+        rd = rd.filter(function (b) { return !seen[key(b)]; });
+        Stock.save(Stock.all().concat(sk));
+        Reading.save(Reading.all().concat(rd));
       } else {
         Stock.save(sk); Reading.save(rd);
       }

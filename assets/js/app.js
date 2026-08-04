@@ -278,8 +278,8 @@
       '<div class="page-inner">' +
         (App._installPrompt ? '<div class="set-group">' + setItem('install', '安装到桌面', '添加到主屏，像原生应用一样使用', 'install') + '</div>' : '') +
         '<div class="set-group">' +
-          setItem('download', '导出备份文件', '生成 JSON 备份，建议卸载前导出', 'export') +
-          setItem('upload', '从备份恢复', '支持覆盖导入与合并导入', 'import') +
+          setItem('download', '导出备份文件', '生成 Excel 备份(.xlsx)，建议卸载前导出', 'export') +
+          setItem('upload', '从备份恢复', '支持 Excel / JSON，覆盖与合并导入', 'import') +
           setItem('shield', '存储占用', kb + ' KB · ' + (last ? new Date(last).toLocaleDateString('zh-CN') + ' 备份过' : '尚未备份过'), 'size') +
         '</div>' +
         '<div class="set-group">' +
@@ -306,6 +306,15 @@
       '<div class="arrow">' + UI.icon('right') + '</div></div>';
   }
 
+  function downloadBlob(blob, fname) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+  }
+
   function onSetting(key) {
     UI.haptic();
     if (key === 'install') {
@@ -320,15 +329,22 @@
       });
     }
     else if (key === 'export') {
-      var blob = new Blob([RS.Backup.export()], { type: 'application/json' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'ReadStack备份_' + new Date().toISOString().slice(0, 10) + '.json';
-      a.click();
-      setTimeout(function () { URL.revokeObjectURL(a.href); }, 3000);
-      RS.Meta.set('lastBackup', Date.now());
-      UI.toast('备份文件已导出');
-      renderMe();
+      try {
+        var bytes = RS.Backup.exportExcel();
+        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        var fname = 'ReadStack备份_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+        var file = new File([blob], fname, { type: blob.type });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: '阅栈备份' })
+            .then(function () { UI.toast('已分享 Excel 备份'); })
+            .catch(function () { downloadBlob(blob, fname); UI.toast('已导出 Excel 备份'); });
+        } else {
+          downloadBlob(blob, fname);
+          UI.toast('已导出 Excel 备份');
+        }
+        RS.Meta.set('lastBackup', Date.now());
+        renderMe();
+      } catch (e) { UI.toast('导出失败：' + e.message); }
     }
     else if (key === 'import') {
       UI.actionSheet('从备份恢复', [
@@ -337,18 +353,25 @@
       ]).then(function (mode) {
         if (!mode) return;
         var input = document.createElement('input');
-        input.type = 'file'; input.accept = '.json,application/json';
+        input.type = 'file';
+        input.accept = '.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.json,application/json';
         input.onchange = function () {
           var f = input.files[0]; if (!f) return;
-          var fr = new FileReader();
-          fr.onload = function () {
-            try {
-              var r = RS.Backup.import(fr.result, mode);
-              UI.toast('已恢复 ' + r.stock + ' 条库存 / ' + r.reading + ' 条阅读');
-              renderMe();
-            } catch (e) { UI.toast('恢复失败：' + e.message); }
-          };
-          fr.readAsText(f);
+          var isXlsx = /\.xlsx?$/i.test(f.name) || (f.type && f.type.indexOf('spreadsheetml') >= 0);
+          var finish = function (c) { UI.toast('已恢复 ' + c.stock + ' 条库存 / ' + c.reading + ' 条阅读'); renderMe(); };
+          var fail = function (msg) { UI.toast('恢复失败：' + msg); };
+          if (isXlsx) {
+            var fr = new FileReader();
+            fr.onload = function () { try { finish(RS.Backup.importExcel(fr.result, mode)); } catch (e) { fail(e.message); } };
+            fr.onerror = function () { fail('文件读取失败'); };
+            fr.readAsArrayBuffer(f);
+          } else {
+            var fr2 = new FileReader();
+            fr2.onload = function () { try { finish(RS.Backup.import(fr2.result, mode)); } catch (e) { fail(e.message); } };
+            fr2.onerror = function () { fail('文件读取失败'); };
+            fr2.readAsText(f);
+          }
+          input.value = '';
         };
         input.click();
       });
