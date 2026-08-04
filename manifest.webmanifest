@@ -1,0 +1,20 @@
+{
+  "name": "阅栈 ReadStack",
+  "short_name": "阅栈",
+  "description": "为 Xiaomi 17 定制的轻量化阅读管理应用 · 库存台账 / 已读清单 / 数据报告",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#EDF5FF",
+  "theme_color": "#A9D3FF",
+  "categories": ["books", "productivity", "lifestyle"],
+  "icons": [
+    { "src": "./assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
