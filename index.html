@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#EDF5FF">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="阅栈 ReadStack · 为 Xiaomi 17 定制的轻量化阅读管理应用">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<title>阅栈 ReadStack · 轻量阅读管理</title>
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/parts.css">
+<link rel="stylesheet" href="assets/css/report.css">
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- ============ 设备容器：Xiaomi 17 / 406×884pt ============ -->
+  <div class="device">
+    <div class="device-screen">
+
+      <!-- 状态栏 -->
+      <div class="statusbar">
+        <span id="sbTime">18:36</span>
+        <i class="sb-notch"></i>
+        <span class="sb-right">
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><rect x="0" y="7" width="2.6" height="4" rx=".8"/><rect x="4" y="4.6" width="2.6" height="6.4" rx=".8"/><rect x="8" y="2.3" width="2.6" height="8.7" rx=".8"/><rect x="12" y="0" width="2.6" height="11" rx=".8"/></svg>
+          <svg width="14" height="11" viewBox="0 0 14 11" fill="currentColor"><path d="M7 10.6 5.1 8.3a3 3 0 0 1 3.8 0L7 10.6Zm-4-4.8L1.6 4.1a8.4 8.4 0 0 1 10.8 0L11 5.8a6.2 6.2 0 0 0-8 0Zm2 2.4L3.6 6.5a5.3 5.3 0 0 1 6.8 0L9 8.2a3.4 3.4 0 0 0-4 0Z"/></svg>
+          <span class="sb-battery"><i></i></span>
+        </span>
+      </div>
+
+      <!-- 应用主体 -->
+      <div class="app">
+
+        <!-- 顶部导航（折叠小标题） -->
+        <header class="app-header" id="appHeader">
+          <div class="hd-title" id="hdTitle">书架</div>
+          <div class="hd-btn" id="btnSearch" aria-label="搜索"></div>
+          <div class="hd-btn" id="btnHdMore" aria-label="更多"></div>
+        </header>
+
+        <!-- 页面容器 -->
+        <main class="app-main" id="appMain">
+          <section class="page active" id="page-stock"></section>
+          <section class="page" id="page-reading"></section>
+          <section class="page" id="page-report"></section>
+          <section class="page" id="page-me"></section>
+        </main>
+
+        <!-- 悬浮新增 -->
+        <div class="fab" id="fab"></div>
+
+        <!-- 底部标签栏 -->
+        <nav class="tabbar" id="tabbar">
+          <div class="tab on" data-tab="stock"><span class="ic"></span><span>库存</span></div>
+          <div class="tab" data-tab="reading"><span class="ic"></span><span>已读</span></div>
+          <div class="tab" data-tab="report"><span class="ic"></span><span>报告</span></div>
+          <div class="tab" data-tab="me"><span class="ic"></span><span>我的</span></div>
+        </nav>
+      </div>
+
+      <!-- 手势条 -->
+      <div class="gesture-bar"><i></i></div>
+    </div>
+  </div>
+
+  <!-- ============ 桌面预览侧栏（真机自动隐藏） ============ -->
+  <aside class="stage-aside">
+    <h1><span>阅栈</span> ReadStack</h1>
+    <p class="sub">为 Xiaomi 17 定制的轻量化阅读管理应用<br>库存台账 · 已读清单 · 数据报告</p>
+    <div class="spec-list">
+      <div class="spec-item"><span>适配机型</span><b>Xiaomi 17（6.3″ 直屏）</b></div>
+      <div class="spec-item"><span>物理分辨率</span><b>2656 × 1220</b></div>
+      <div class="spec-item"><span>逻辑视口</span><b>406 × 884 pt @3x</b></div>
+      <div class="spec-item"><span>屏幕比例</span><b>19.6 : 9</b></div>
+      <div class="spec-item"><span>刷新率</span><b>1–120Hz LTPO</b></div>
+      <div class="spec-item"><span>系统</span><b>小米澎湃 OS</b></div>
+      <div class="spec-item"><span>包体依赖</span><b>0 个三方库</b></div>
+    </div>
+    <p class="stage-tip">
+      左侧为等比例真机模拟。在手机浏览器中打开时自动脱壳全屏、贴合安全区，无黑边与内容截断。<br>
+      所有数据保存在本机 localStorage，不联网。
+    </p>
+  </aside>
+
+</div>
+
+<script src="assets/js/store.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/views.js"></script>
+<script src="assets/js/forms.js"></script>
+<script src="assets/js/report.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  /* 注册 Service Worker，使 PWA 可安装、可离线 */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () { /* 非安全上下文（如 file://）静默忽略 */ });
+    });
+  }
+</script>
+</body>
+</html>
