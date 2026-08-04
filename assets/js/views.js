@@ -126,7 +126,7 @@
             (b.finishDate ? '<span>' + fmtDate(b.finishDate) + ' 读完</span>' : '<span style="color:var(--warn)">未读日期</span>') +
           '</div>' +
         '</div>' +
-      '</div>';
+      '</div></div>';
   };
 
   Views.renderReading = function () {
