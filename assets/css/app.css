@@ -1,0 +1,107 @@
+/* ============================================================
+   阅栈 ReadStack · 页面与组件样式
+   ============================================================ */
+
+.app { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+/* ---------------- 顶部导航栏（渐变 + 折叠小标题） ---------------- */
+.app-header {
+  position: absolute; left: 0; right: 0; top: 0; z-index: 50;
+  height: var(--header-h);
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 12px 0 var(--gap);
+  background: rgba(240, 246, 255, 0);
+  backdrop-filter: saturate(150%) blur(0px);
+  -webkit-backdrop-filter: saturate(150%) blur(0px);
+  transition: background var(--dur) var(--ease-mi), backdrop-filter var(--dur), box-shadow var(--dur);
+}
+.app-header.solid {
+  background: rgba(243, 248, 255, .82);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 1px 0 var(--line-2);
+}
+.hd-title {
+  flex: 1; font-size: var(--fs-h2); font-weight: 700; letter-spacing: -.2px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity var(--dur) var(--ease-mi), transform var(--dur) var(--ease-mi);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.app-header.solid .hd-title { opacity: 1; transform: none; }
+.hd-btn {
+  width: 36px; height: 36px; flex: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--t2); background: rgba(255,255,255,.66);
+  box-shadow: var(--sh-1); cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-mi);
+}
+.hd-btn:active { transform: scale(.9); }
+.hd-btn svg { width: 19px; height: 19px; }
+.hd-back { margin-right: 2px; }
+
+/* ---------------- 主滚动区 ---------------- */
+.app-main {
+  flex: 1; min-height: 0; position: relative; overflow: hidden;
+}
+.page {
+  position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(var(--header-h) + 4px) 0 calc(var(--tabbar-h) + var(--gesture-h) + 14px);
+  display: none;
+}
+.page.active { display: block; animation: fadeIn var(--dur-fast) var(--ease-out); }
+.page-inner { padding: 0 var(--gap); }
+
+/* 大标题区 */
+.page-hero { padding: 6px var(--gap) 14px; }
+.page-hero h2 {
+  font-size: var(--fs-hero); font-weight: 800; letter-spacing: -.8px; line-height: 1.2;
+  color: var(--t1);
+}
+.page-hero h2 em {
+  font-style: normal;
+  background: linear-gradient(120deg, #5B9BEE, #A48CF0 50%, #F27FB4);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.page-hero p { margin-top: 5px; font-size: var(--fs-sm); color: var(--t3); }
+
+/* ---------------- 底部标签栏 ---------------- */
+.tabbar {
+  position: absolute; left: 0; right: 0; z-index: 55;
+  bottom: 0; height: calc(var(--tabbar-h) + var(--gesture-h));
+  padding-bottom: var(--gesture-h);
+  display: flex; align-items: center;
+  background: rgba(246, 249, 255, .86);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  border-top: 1px solid var(--line-2);
+}
+.tab {
+  flex: 1; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px;
+  color: var(--t4); cursor: pointer;
+  transition: color var(--dur-fast);
+}
+.tab .ic { display: flex; align-items: center; justify-content: center; }
+.tab svg { width: 22px; height: 22px; transition: transform var(--dur) var(--ease-mi); }
+.tab span:last-child { font-size: 10px; font-weight: 600; letter-spacing: .2px; }
+.tab.on { color: #4B7FD6; }
+.tab.on svg { transform: translateY(-1px) scale(1.06); }
+.tab.on span:last-child {
+  background: linear-gradient(110deg, #5B9BEE, #F27FB4);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------------- 悬浮新增按钮 ---------------- */
+.fab {
+  position: absolute; right: var(--gap); z-index: 56;
+  bottom: calc(var(--tabbar-h) + var(--gesture-h) + 16px);
+  width: 54px; height: 54px; border-radius: 20px;
+  background: var(--grad-btn); box-shadow: var(--sh-pink);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; cursor: pointer;
+  transition: transform var(--dur) var(--ease-mi), opacity var(--dur);
+}
+.fab svg { width: 25px; height: 25px; }
+.fab:active { transform: scale(.9) rotate(90deg); }
+.fab.hide { opacity: 0; transform: scale(.6) translateY(20px); pointer-events: none; }
