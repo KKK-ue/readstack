@@ -1,0 +1,345 @@
+/* ============================================================
+   阅栈 ReadStack · 设计系统 Design Tokens
+   机型基准：Xiaomi 17 / 6.3" / 2656×1220 / 19.6:9 / DPR3
+   逻辑视口：406 × 884 pt
+   ============================================================ */
+
+:root {
+  /* ---------- 机型基准 ---------- */
+  --mi-w: 406px;
+  --mi-h: 884px;
+  --mi-radius: 46px;          /* 屏幕物理圆角 */
+  --statusbar-h: 44px;        /* 澎湃OS 状态栏 */
+  --gesture-h: 22px;          /* 手势条区域 */
+  --tabbar-h: 58px;
+  --header-h: 52px;
+
+  /* ---------- 主色：粉蓝渐变体系 ---------- */
+  --blue-100: #EAF3FF;
+  --blue-200: #D6E8FF;
+  --blue-300: #B4D5FF;
+  --blue-400: #8CBEFB;
+  --blue-500: #6BA6F0;
+
+  --pink-100: #FFF0F6;
+  --pink-200: #FFDCEB;
+  --pink-300: #FFC2DE;
+  --pink-400: #FFA6CC;
+  --pink-500: #F58BB8;
+
+  --violet-200: #E2DCFF;
+  --violet-300: #C9C4FF;
+
+  /* 核心渐变：浅蓝 → 柔粉（135°，中间过渡淡紫，避免脏色断层） */
+  --grad-main: linear-gradient(135deg, #A9D3FF 0%, #C6C8FF 46%, #FFC0DD 100%);
+  --grad-main-soft: linear-gradient(135deg, rgba(169,211,255,.30) 0%, rgba(198,200,255,.24) 46%, rgba(255,192,221,.30) 100%);
+  --grad-card: linear-gradient(140deg, #FFFFFF 0%, #FBFCFF 52%, #FFF7FB 100%);
+  --grad-page: linear-gradient(180deg, #EDF5FF 0%, #F3F6FF 38%, #FDF4F9 100%);
+  --grad-btn: linear-gradient(135deg, #93C6FF 0%, #B9BCFF 50%, #FFAED2 100%);
+  --grad-pill: linear-gradient(135deg, rgba(147,198,255,.20), rgba(255,174,210,.20));
+
+  /* ---------- 文字 ---------- */
+  --t1: #1B2439;   /* 主文字 */
+  --t2: #56637F;   /* 次要 */
+  --t3: #8B96AE;   /* 辅助 */
+  --t4: #AEB7C9;   /* 占位 */
+  --t-on: #FFFFFF;
+
+  /* ---------- 功能色（阅读状态） ---------- */
+  --st-unread: #8CA6C9;
+  --st-reading: #6BA6F0;
+  --st-done: #4FC08D;
+  --st-drop: #C6A6D8;
+  --danger: #F2668B;
+  --warn: #F5B461;
+  --star: #FFB13D;
+
+  /* ---------- 面 & 线 ---------- */
+  --surface: #FFFFFF;
+  --surface-2: rgba(255, 255, 255, .72);
+  --surface-3: rgba(255, 255, 255, .48);
+  --line: rgba(120, 145, 190, .14);
+  --line-2: rgba(120, 145, 190, .09);
+
+  /* ---------- 阴影（柔和，不发灰） ---------- */
+  --sh-1: 0 2px 8px rgba(96, 128, 184, .06);
+  --sh-2: 0 6px 20px rgba(96, 128, 184, .10);
+  --sh-3: 0 14px 38px rgba(96, 128, 184, .16);
+  --sh-pink: 0 8px 22px rgba(255, 158, 200, .28);
+  --sh-blue: 0 8px 22px rgba(120, 176, 250, .26);
+
+  /* ---------- 圆角（澎湃OS 大圆角语言） ---------- */
+  --r-xs: 8px;
+  --r-s: 12px;
+  --r-m: 16px;
+  --r-l: 22px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---------- 间距（8pt 栅格，页面左右边距 18pt） ---------- */
+  --gap: 18px;
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;
+  --sp-4: 16px; --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+
+  /* ---------- 字阶（460ppi 下的舒适读值） ---------- */
+  --fs-hero: 30px;   /* 大标题 */
+  --fs-h1: 21px;
+  --fs-h2: 17px;
+  --fs-h3: 15px;
+  --fs-body: 14px;
+  --fs-sm: 12.5px;
+  --fs-xs: 11px;
+  --lh-tight: 1.28;
+  --lh-body: 1.68;   /* 长文本行距，久读不累 */
+
+  /* ---------- 动效（澎湃OS 阻尼曲线） ---------- */
+  --ease-mi: cubic-bezier(.28, .78, .32, 1);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --dur-fast: .18s;
+  --dur: .28s;
+  --dur-slow: .42s;
+}
+
+/* ============================================================
+   基础重置
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: "MiSans", "MiSans VF", "HarmonyOS Sans SC", "PingFang SC",
+               "HarmonyOS Sans", "Source Han Sans CN", "Noto Sans CJK SC",
+               system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--t1);
+  font-size: var(--fs-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-variant-numeric: tabular-nums;
+}
+
+body {
+  background: #E8ECF6;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none;
+}
+
+button, input, textarea, select {
+  font-family: inherit; font-size: inherit; color: inherit;
+  border: none; outline: none; background: none; -webkit-appearance: none;
+}
+input, textarea { user-select: text; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+svg { display: block; }
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ============================================================
+   舞台 & 设备外壳（真机运行时自动脱壳全屏）
+   ============================================================ */
+.stage {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px;
+  background:
+    radial-gradient(1100px 620px at 22% 12%, #DCE9FF 0%, transparent 62%),
+    radial-gradient(900px 600px at 82% 88%, #FFE2F0 0%, transparent 60%),
+    #EDEFF7;
+}
+
+.device {
+  position: relative;
+  width: var(--mi-w); height: var(--mi-h);
+  border-radius: var(--mi-radius);
+  background: #0B0E16;
+  padding: 3px;
+  box-shadow:
+    0 0 0 2px #2A2F3D,
+    0 0 0 5px #12151E,
+    0 40px 90px -20px rgba(40, 60, 110, .45),
+    0 10px 30px rgba(40, 60, 110, .22);
+  flex: none;
+}
+/* 侧键 */
+.device::after {
+  content: ""; position: absolute; right: -6px; top: 168px;
+  width: 3px; height: 96px; border-radius: 3px;
+  background: linear-gradient(180deg, #3A4152, #22262F);
+}
+
+.device-screen {
+  position: relative; width: 100%; height: 100%;
+  border-radius: calc(var(--mi-radius) - 3px);
+  overflow: hidden;
+  background: var(--grad-page);
+  display: flex; flex-direction: column;
+  isolation: isolate;
+}
+
+/* 屏幕外说明卡（仅桌面预览可见） */
+.stage-aside {
+  width: 300px; flex: none; color: var(--t2);
+}
+.stage-aside h1 {
+  font-size: 26px; color: var(--t1); letter-spacing: -.4px; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 10px;
+}
+.stage-aside h1 span {
+  background: var(--grad-btn); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stage-aside .sub { font-size: 13px; color: var(--t3); margin-bottom: 20px; line-height: 1.7; }
+.spec-list { display: flex; flex-direction: column; gap: 9px; }
+.spec-item {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,.72); border: 1px solid rgba(255,255,255,.9);
+  border-radius: var(--r-s); padding: 9px 13px; font-size: 12.5px;
+  box-shadow: var(--sh-1);
+}
+.spec-item b { color: var(--t1); font-weight: 600; }
+.stage-tip { margin-top: 18px; font-size: 11.5px; color: var(--t4); line-height: 1.75; }
+
+@media (max-width: 900px) { .stage-aside { display: none; } }
+
+/* 真机 / 窄屏：脱壳全屏，无黑边 */
+@media (max-width: 520px), (pointer: coarse) and (max-width: 900px) {
+  body { background: var(--grad-page); }
+  .stage { gap: 0; background: none; }
+  .stage-aside { display: none; }
+  .device {
+    width: 100vw; height: 100vh; height: 100dvh;
+    border-radius: 0; padding: 0; box-shadow: none; background: none;
+  }
+  .device::after { display: none; }
+  .device-screen { border-radius: 0; }
+  :root {
+    --statusbar-h: max(env(safe-area-inset-top), 24px);
+    --gesture-h: max(env(safe-area-inset-bottom), 12px);
+  }
+  .statusbar .sb-notch { display: none; }
+}
+
+/* ============================================================
+   状态栏（澎湃OS 居中打孔）
+   ============================================================ */
+.statusbar {
+  position: relative; z-index: 60; flex: none;
+  height: var(--statusbar-h);
+  padding: 0 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 600; color: var(--t1);
+  letter-spacing: .2px;
+  padding-top: env(safe-area-inset-top);
+}
+.sb-right { display: flex; align-items: center; gap: 5px; }
+.sb-notch {
+  position: absolute; left: 50%; top: 11px; transform: translateX(-50%);
+  width: 11px; height: 11px; border-radius: 50%; background: #05070C;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,.06);
+}
+.sb-battery {
+  width: 22px; height: 11px; border-radius: 3px;
+  border: 1.3px solid var(--t1); position: relative; opacity: .9;
+}
+.sb-battery::after {
+  content: ""; position: absolute; right: -3px; top: 3px;
+  width: 1.6px; height: 4px; border-radius: 0 1px 1px 0; background: var(--t1);
+}
+.sb-battery i {
+  position: absolute; inset: 1.4px; width: 68%; border-radius: 1.4px;
+  background: var(--t1); display: block;
+}
+
+/* ============================================================
+   手势条
+   ============================================================ */
+.gesture-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 85;
+  height: var(--gesture-h);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.gesture-bar i {
+  width: 118px; height: 4.5px; border-radius: 99px;
+  background: rgba(27, 36, 57, .30);
+}
+
+/* ============================================================
+   通用原子组件
+   ============================================================ */
+.card {
+  background: var(--grad-card);
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: var(--r-l);
+  box-shadow: var(--sh-2);
+}
+
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 22px; padding: 0 9px; border-radius: var(--r-pill);
+  font-size: var(--fs-xs); font-weight: 600; line-height: 1;
+  white-space: nowrap;
+}
+.pill.unread  { color: #5C7699; background: rgba(140,166,201,.16); }
+.pill.reading { color: #3C87DC; background: rgba(107,166,240,.16); }
+.pill.done    { color: #2E9E6F; background: rgba(79,192,141,.16); }
+.pill.drop    { color: #9A73B8; background: rgba(198,166,216,.20); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 44px; padding: 0 20px; border-radius: var(--r-pill);
+  font-size: var(--fs-h3); font-weight: 600; color: var(--t1);
+  background: rgba(255,255,255,.86); box-shadow: var(--sh-1);
+  transition: transform var(--dur-fast) var(--ease-mi), opacity var(--dur-fast);
+  cursor: pointer;
+}
+.btn:active { transform: scale(.965); opacity: .9; }
+.btn-primary {
+  color: #16305C; background: var(--grad-btn); box-shadow: var(--sh-blue);
+  font-weight: 700;
+}
+.btn-ghost { background: rgba(255,255,255,.6); color: var(--t2); box-shadow: none; border: 1px solid var(--line); }
+.btn-danger { color: var(--danger); background: rgba(242,102,139,.10); box-shadow: none; }
+.btn-block { width: 100%; }
+.btn-sm { height: 34px; padding: 0 14px; font-size: var(--fs-sm); }
+
+/* 触感涟漪 */
+.tap { transition: transform var(--dur-fast) var(--ease-mi); cursor: pointer; }
+.tap:active { transform: scale(.975); }
+
+/* 空态 */
+.empty {
+  padding: 56px 24px; text-align: center; color: var(--t3);
+}
+.empty .ico {
+  width: 76px; height: 76px; margin: 0 auto 16px; border-radius: 26px;
+  background: var(--grad-main-soft);
+  display: flex; align-items: center; justify-content: center; font-size: 32px;
+}
+.empty h4 { font-size: var(--fs-h3); color: var(--t2); font-weight: 600; margin-bottom: 6px; }
+.empty p { font-size: var(--fs-sm); color: var(--t4); line-height: 1.7; }
+
+/* 分区标题 */
+.sec-title {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2px 10px; 
+}
+.sec-title h3 {
+  font-size: var(--fs-h2); font-weight: 700; color: var(--t1); letter-spacing: -.2px;
+  display: flex; align-items: center; gap: 7px;
+}
+.sec-title h3::before {
+  content: ""; width: 3px; height: 14px; border-radius: 2px; background: var(--grad-btn);
+}
+.sec-title .more { font-size: var(--fs-sm); color: var(--t3); }
+
+/* 星级 */
+.stars { display: inline-flex; gap: 2px; }
+.stars svg { width: 13px; height: 13px; }
+.star-on { fill: var(--star); }
+.star-off { fill: rgba(140,155,180,.22); }
+
+/* 骨架/动画 */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
