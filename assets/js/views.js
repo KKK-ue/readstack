@@ -115,18 +115,15 @@
      已读清单 + 摘抄墙
      ============================================================ */
   Views.readingItemHTML = function (b, kw) {
-    var days = RS.daysBetween(b.startDate, b.finishDate);
     return '<div class="book-item" data-open-read="' + b.id + '">' +
       '<div class="bi-main">' +
         '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
         '<div class="bi-side">' +
           '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + '</div>' +
           '<div class="bi-meta">' +
-            UI.starsHTML(b.rating) +
+            '<span class="pill rate">' + (b.rating ? '★ ' + b.rating : '未评') + '</span>' +
             '<span class="tag">' + esc(b.category || '其他') + '</span>' +
-            (b.finishDate ? '<span>' + fmtDate(b.finishDate) + ' 读完</span>' : '<span style="color:var(--warn)">未填读完日期</span>') +
-            (days ? '<span>' + days + '天</span>' : '') +
-            ((b.excerpts || []).length ? '<span>摘抄' + b.excerpts.length + '</span>' : '') +
+            (b.finishDate ? '<span>' + fmtDate(b.finishDate) + ' 读完</span>' : '<span style="color:var(--warn)">未读日期</span>') +
           '</div>' +
         '</div>' +
       '</div>';

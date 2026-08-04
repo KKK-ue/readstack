@@ -110,14 +110,6 @@
   padding: 2px 8px; border-radius: var(--r-pill); font-weight: 600;
 }
 
-/* 已读条目右侧星级块 */
-.bi-right { flex: none; display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
-.bi-score {
-  font-size: 19px; font-weight: 800; letter-spacing: -.5px;
-  background: linear-gradient(120deg, #5B9BEE, #F27FB4);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-
 /* ---------------- 摘抄卡片 ---------------- */
 .quote-card {
   padding: 15px 16px; border-radius: var(--r-l); position: relative; overflow: hidden;

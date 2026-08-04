@@ -284,6 +284,7 @@ svg { display: block; }
 .pill.reading { color: #3C87DC; background: rgba(107,166,240,.16); }
 .pill.done    { color: #2E9E6F; background: rgba(79,192,141,.16); }
 .pill.drop    { color: #9A73B8; background: rgba(198,166,216,.20); }
+.pill.rate    { color: #C8842B; background: rgba(240,180,90,.18); }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
