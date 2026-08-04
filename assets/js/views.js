@@ -24,12 +24,14 @@
     return '<div class="book-item" data-open-stock="' + b.id + '">' +
       '<div class="bi-main">' +
         '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
-        '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>' +
-        '<div class="bi-meta">' +
-          '<span class="pill ' + st[0] + '">' + st[1] + '</span>' +
-          '<span class="tag">' + esc(b.category || '其他') + '</span>' +
-          (b.price ? '<span class="price">¥' + b.price + '</span>' : '') +
-          (b.purchaseDate ? '<span>' + fmtDate(b.purchaseDate) + ' 购入</span>' : '') +
+        '<div class="bi-side">' +
+          '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>' +
+          '<div class="bi-meta">' +
+            '<span class="pill ' + st[0] + '">' + st[1] + '</span>' +
+            '<span class="tag">' + esc(b.category || '其他') + '</span>' +
+            (b.price ? '<span class="price">¥' + b.price + '</span>' : '') +
+            (b.purchaseDate ? '<span>' + fmtDate(b.purchaseDate) + ' 购入</span>' : '') +
+          '</div>' +
         '</div>' +
       '</div></div>';
   };
@@ -66,7 +68,7 @@
           }).join('') + '</div>' : '') +
       '<div class="page-inner">' +
         (list.length
-          ? '<div class="book-list">' + list.map(function (b, i) {
+          ? '<div class="book-list rows">' + list.map(function (b, i) {
               return Views.stockItemHTML(b).replace('class="book-item"', 'class="book-item" style="animation-delay:' + Math.min(i * 22, 240) + 'ms"');
             }).join('') + '</div>'
           : emptyHTML('📚', '这里还没有书', f.status === 'all' && f.cat === 'all'
@@ -117,13 +119,15 @@
     return '<div class="book-item" data-open-read="' + b.id + '">' +
       '<div class="bi-main">' +
         '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
-        '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + '</div>' +
-        '<div class="bi-meta">' +
-          UI.starsHTML(b.rating) +
-          '<span class="tag">' + esc(b.category || '其他') + '</span>' +
-          (b.finishDate ? '<span>' + fmtDate(b.finishDate) + ' 读完</span>' : '<span style="color:var(--warn)">未填读完日期</span>') +
-          (days ? '<span>' + days + '天</span>' : '') +
-          ((b.excerpts || []).length ? '<span>摘抄' + b.excerpts.length + '</span>' : '') +
+        '<div class="bi-side">' +
+          '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + '</div>' +
+          '<div class="bi-meta">' +
+            UI.starsHTML(b.rating) +
+            '<span class="tag">' + esc(b.category || '其他') + '</span>' +
+            (b.finishDate ? '<span>' + fmtDate(b.finishDate) + ' 读完</span>' : '<span style="color:var(--warn)">未填读完日期</span>') +
+            (days ? '<span>' + days + '天</span>' : '') +
+            ((b.excerpts || []).length ? '<span>摘抄' + b.excerpts.length + '</span>' : '') +
+          '</div>' +
         '</div>' +
       '</div>';
   };
@@ -181,7 +185,7 @@
               return '<span class="chip' + (f.cat === c ? ' on' : '') + '" data-rcat="' + esc(c) + '">' + esc(c) + '<i>' + cats[c] + '</i></span>';
             }).join('') + '</div>' : '') +
         '<div class="page-inner">' + (list.length
-          ? '<div class="book-list">' + list.map(function (b, i) {
+          ? '<div class="book-list rows">' + list.map(function (b, i) {
               return Views.readingItemHTML(b).replace('class="book-item"', 'class="book-item" style="animation-delay:' + Math.min(i * 22, 240) + 'ms"');
             }).join('') + '</div>'
           : emptyHTML('📖', '还没有阅读记录', '点右下角 + 登记一本读完的书<br>评分、摘抄、感悟都可以慢慢补')) + '</div>';
