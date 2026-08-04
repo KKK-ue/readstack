@@ -60,29 +60,35 @@
 .book-list { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 .rp-card .book-list { display: flex; flex-direction: column; gap: 9px; }
 
-/* 已读 / 库存：每行一本，标题与信息并列分布 */
-.book-list.rows { gap: 9px; }
+/* 已读 / 库存：每行一本，上下两行紧凑排布，内容铺满整行不留空白 */
+.book-list.rows { gap: 8px; }
 .book-list.rows .book-item {
-  display: flex; flex-direction: row; align-items: center; gap: 12px;
-  padding: 12px 14px; border-radius: var(--r-l);
+  display: flex; flex-direction: row; align-items: stretch;
+  padding: 10px 13px; border-radius: var(--r-l);
   background: var(--grad-card); border: 1px solid rgba(255,255,255,.9);
   box-shadow: var(--sh-1); cursor: pointer;
   transition: transform var(--dur-fast) var(--ease-mi), box-shadow var(--dur);
   animation: fadeUp .3s var(--ease-out) backwards;
 }
 .book-list.rows .book-item:active { transform: scale(.985); box-shadow: var(--sh-2); }
-.book-list.rows .bi-main { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.book-list.rows .bi-main { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; width: 100%; }
+/* 第一行：书名（占满左侧）+ 状态/评分徽标（钉在右端） */
+.book-list.rows .bi-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .book-list.rows .bi-title {
-  min-width: 0; display: block; -webkit-line-clamp: initial; -webkit-box-orient: initial;
-  font-size: var(--fs-h3); font-weight: 700; color: var(--t1); line-height: 1.4; letter-spacing: .1px;
+  flex: 1; min-width: 0;
+  font-size: var(--fs-h3); font-weight: 700; color: var(--t1); line-height: 1.35; letter-spacing: .1px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.book-list.rows .bi-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 0; max-width: 45%; }
-.book-list.rows .bi-author { font-size: var(--fs-sm); color: var(--t3); line-height: 1.4; white-space: nowrap; max-width: 175px; overflow: hidden; text-overflow: ellipsis; }
-.book-list.rows .bi-meta {
-  display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end;
-  font-size: var(--fs-xs); color: var(--t3); line-height: 1.45; max-width: 210px;
+.book-list.rows .bi-top .pill { flex: none; }
+/* 第二行：作者·分类·价格（左侧）+ 日期（顶到最右端），整行铺满 */
+.book-list.rows .bi-bottom {
+  display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden;
+  font-size: var(--fs-xs); color: var(--t3); line-height: 1.4; white-space: nowrap;
 }
+.book-list.rows .bi-bottom .bi-author { flex: 0 1 auto; min-width: 0; margin-top: 0; font-size: var(--fs-xs); line-height: 1.4; color: var(--t3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.book-list.rows .bi-bottom .tag,
+.book-list.rows .bi-bottom .price { flex: none; }
+.book-list.rows .bi-bottom .bi-date { margin-left: auto; flex: none; }
 .book-item {
   display: flex; flex-direction: column; gap: 9px; padding: 13px 13px 12px; border-radius: var(--r-l);
   background: var(--grad-card); border: 1px solid rgba(255,255,255,.9);

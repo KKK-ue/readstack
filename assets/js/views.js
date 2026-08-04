@@ -23,15 +23,15 @@
     var st = ST_MAP[b.status] || ST_MAP.unread;
     return '<div class="book-item" data-open-stock="' + b.id + '">' +
       '<div class="bi-main">' +
-        '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
-        '<div class="bi-side">' +
-          '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>' +
-          '<div class="bi-meta">' +
-            '<span class="pill ' + st[0] + '">' + st[1] + '</span>' +
-            '<span class="tag">' + esc(b.category || '其他') + '</span>' +
-            (b.price ? '<span class="price">¥' + b.price + '</span>' : '') +
-            (b.purchaseDate ? '<span>' + fmtDate(b.purchaseDate) + ' 购入</span>' : '') +
-          '</div>' +
+        '<div class="bi-top">' +
+          '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
+          '<span class="pill ' + st[0] + '">' + st[1] + '</span>' +
+        '</div>' +
+        '<div class="bi-bottom">' +
+          '<span class="bi-author">' + App.hl(b.author || '佚名', kw) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</span>' +
+          '<span class="tag">' + esc(b.category || '其他') + '</span>' +
+          (b.price ? '<span class="price">¥' + b.price + '</span>' : '') +
+          (b.purchaseDate ? '<span class="bi-date">' + fmtDate(b.purchaseDate) + ' 购入</span>' : '') +
         '</div>' +
       '</div></div>';
   };
@@ -117,14 +117,14 @@
   Views.readingItemHTML = function (b, kw) {
     return '<div class="book-item" data-open-read="' + b.id + '">' +
       '<div class="bi-main">' +
-        '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
-        '<div class="bi-side">' +
-          '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + '</div>' +
-          '<div class="bi-meta">' +
-            '<span class="pill rate">' + (b.rating ? '★ ' + b.rating : '未评') + '</span>' +
-            '<span class="tag">' + esc(b.category || '其他') + '</span>' +
-            (b.finishDate ? '<span>' + fmtDate(b.finishDate) + ' 读完</span>' : '<span style="color:var(--warn)">未读日期</span>') +
-          '</div>' +
+        '<div class="bi-top">' +
+          '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
+          '<span class="pill rate">' + (b.rating ? '★ ' + b.rating : '未评') + '</span>' +
+        '</div>' +
+        '<div class="bi-bottom">' +
+          '<span class="bi-author">' + App.hl(b.author || '佚名', kw) + '</span>' +
+          '<span class="tag">' + esc(b.category || '其他') + '</span>' +
+          (b.finishDate ? '<span class="bi-date">' + fmtDate(b.finishDate) + ' 读完</span>' : '<span class="bi-date" style="color:var(--warn)">未读日期</span>') +
         '</div>' +
       '</div></div>';
   };
