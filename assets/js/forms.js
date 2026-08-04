@@ -10,68 +10,14 @@
 
   function today() { return new Date().toISOString().slice(0, 10); }
 
-  function coverField(cover) {
-    return '<div class="field"><label>书籍封面</label>' +
-      '<div class="cover-upload">' +
-        '<div class="cover-slot" data-cover-slot>' +
-          (cover ? '<img src="' + cover + '" alt="">' : UI.icon('camera') + '<span>从相册选择</span>') +
-        '</div>' +
-        '<div class="cover-ops">' +
-          '<button type="button" class="btn btn-sm btn-ghost" data-cover-pick>' + (cover ? '替换封面' : '上传封面') + '</button>' +
-          '<button type="button" class="btn btn-sm btn-ghost" data-cover-crop' + (cover ? '' : ' disabled style="opacity:.4"') + '>重新裁剪</button>' +
-          '<button type="button" class="btn btn-sm btn-danger" data-cover-del' + (cover ? '' : ' disabled style="opacity:.4"') + '>删除封面</button>' +
-          '<p class="field-hint" style="margin-top:2px">3:4 比例 · 自动压缩至 360×480</p>' +
-        '</div>' +
-      '</div></div>';
-  }
-
-  /** 封面交互统一绑定；state 为 {cover, raw} */
-  function bindCover(root, state) {
-    var slot = $('[data-cover-slot]', root);
-    function paint() {
-      slot.innerHTML = state.cover ? '<img src="' + state.cover + '" alt="">' : UI.icon('camera') + '<span>从相册选择</span>';
-      ['data-cover-crop', 'data-cover-del'].forEach(function (a) {
-        var b = $('[' + a + ']', root);
-        b.disabled = !state.cover;
-        b.style.opacity = state.cover ? '' : '.4';
-      });
-      $('[data-cover-pick]', root).textContent = state.cover ? '替换封面' : '上传封面';
-    }
-    function pick() {
-      UI.pickImage().then(function (src) {
-        if (!src) return;
-        state.raw = src;
-        return UI.cropImage(src).then(function (out) {
-          if (!out) return;
-          state.cover = out; paint(); UI.toast('封面已更新');
-        });
-      });
-    }
-    slot.onclick = pick;
-    $('[data-cover-pick]', root).onclick = pick;
-    $('[data-cover-crop]', root).onclick = function () {
-      var src = state.raw || state.cover;
-      if (!src) return;
-      UI.cropImage(src).then(function (out) { if (out) { state.cover = out; paint(); } });
-    };
-    $('[data-cover-del]', root).onclick = function () {
-      UI.confirm({ title: '删除封面？', text: '封面图将被移除，书籍信息保留。', danger: true, ok: '删除' })
-        .then(function (ok) { if (ok) { state.cover = ''; state.raw = ''; paint(); } });
-    };
-  }
-
-  /* ============================================================
-     藏书登记表单
-     ============================================================ */
   global.Views.openStockForm = function (id, prefill) {
     var editing = !!id;
     var b = editing ? RS.Stock.get(id) : Object.assign({
       title: '', author: '', category: '其他', publisher: '', price: '', pages: '',
-      cover: '', status: 'unread', purchaseDate: today(), note: ''
+      status: 'unread', purchaseDate: today(), note: ''
     }, prefill || {});
     if (!b) return UI.toast('记录不存在');
 
-    var state = { cover: b.cover || '', raw: '' };
     var pick = { category: b.category || '其他', status: b.status || 'unread' };
 
     var body = '<div class="form">' +
@@ -79,7 +25,6 @@
         '<input class="input" id="f-title" maxlength="60" placeholder="例如：百年孤独" value="' + esc(b.title) + '"></div>' +
       '<div class="field"><label>作者</label>' +
         '<input class="input" id="f-author" maxlength="40" placeholder="例如：加西亚·马尔克斯" value="' + esc(b.author) + '"></div>' +
-      coverField(state.cover) +
       '<div class="field"><label>分类</label><div class="opt-group" data-group="category">' +
         RS.CATEGORIES.map(function (c) {
           return '<span class="opt' + (pick.category === c ? ' on' : '') + '" data-v="' + c + '">' + c + '</span>';
@@ -112,7 +57,6 @@
               '<button class="btn btn-primary" style="flex:1.6" data-save>' + UI.icon('check') + '保存</button>'
     });
 
-    bindCover(v.el, state);
     bindOptGroups(v.el, pick);
 
     $('[data-cancel]', v.el).onclick = function () { App.popView(); };
@@ -128,8 +72,7 @@
         price: parseFloat($('#f-price', v.el).value) || 0,
         pages: parseInt($('#f-pages', v.el).value, 10) || 0,
         purchaseDate: $('#f-date', v.el).value,
-        note: $('#f-note', v.el).value.trim(),
-        cover: state.cover
+        note: $('#f-note', v.el).value.trim()
       };
       if (editing) RS.Stock.update(id, data); else RS.Stock.add(data);
       UI.haptic(20);
@@ -160,11 +103,10 @@
     var editing = !!id;
     var b = editing ? RS.Reading.get(id) : Object.assign({
       title: '', author: '', category: '其他', source: 'paper',
-      startDate: '', finishDate: today(), rating: 0, cover: '', reflection: ''
+      startDate: '', finishDate: today(), rating: 0, reflection: ''
     }, prefill || {});
     if (!b) return UI.toast('记录不存在');
 
-    var state = { cover: b.cover || '', raw: '' };
     var pick = { category: b.category || '其他', source: b.source || 'paper' };
     var rating = b.rating || 0;
 
@@ -178,7 +120,6 @@
       '<div class="field"><label>我的评分</label>' +
         '<div class="star-picker" id="r-stars"></div>' +
         '<p class="field-hint">1–5 星，随时可改；未评分不计入平均分</p></div>' +
-      coverField(state.cover) +
       '<div class="field"><label>分类</label><div class="opt-group" data-group="category">' +
         RS.CATEGORIES.map(function (c) {
           return '<span class="opt' + (pick.category === c ? ' on' : '') + '" data-v="' + c + '">' + c + '</span>';
@@ -204,7 +145,6 @@
               '<button class="btn btn-primary" style="flex:1.6" data-save>' + UI.icon('check') + '保存</button>'
     });
 
-    bindCover(v.el, state);
     bindOptGroups(v.el, pick);
 
     var starBox = $('#r-stars', v.el);
@@ -238,7 +178,7 @@
         author: $('#r-author', v.el).value.trim(),
         category: pick.category, source: pick.source,
         startDate: s, finishDate: f, rating: rating,
-        reflection: ta.value.trim(), cover: state.cover
+        reflection: ta.value.trim()
       };
       if (editing) RS.Reading.update(id, data); else RS.Reading.add(data);
       UI.haptic(20);

@@ -74,7 +74,7 @@
       var l = this.all();
       var item = Object.assign({
         id: uid('sk'), title: '', author: '', category: '其他', publisher: '',
-        price: 0, pages: 0, cover: '', status: 'unread',
+        price: 0, pages: 0, status: 'unread',
         purchaseDate: '', tags: [], note: '',
         createdAt: now(), updatedAt: now()
       }, data);
@@ -123,7 +123,7 @@
         id: uid('rd'), title: '', author: '', category: '其他',
         source: 'paper',                   // paper 纸质 / ebook 电子 / audio 有声
         startDate: '', finishDate: '',
-        rating: 0, cover: '',
+        rating: 0,
         excerpts: [],                      // [{id,text,page,createdAt}]
         reflection: '',
         createdAt: now(), updatedAt: now()
@@ -380,24 +380,6 @@
     set: function (k, v) { var m = this.all(); m[k] = v; write(K.meta, m); }
   };
 
-  /* ---------------- 图片压缩（封面入库前统一处理） ---------------- */
-  function compressImage(source, maxW, quality) {
-    maxW = maxW || 480; quality = quality || 0.82;
-    return new Promise(function (resolve, reject) {
-      var img = new Image();
-      img.onload = function () {
-        var r = Math.min(1, maxW / img.width);
-        var w = Math.round(img.width * r), h = Math.round(img.height * r);
-        var cv = document.createElement('canvas');
-        cv.width = w; cv.height = h;
-        cv.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(cv.toDataURL('image/jpeg', quality));
-      };
-      img.onerror = reject;
-      img.src = source;
-    });
-  }
-
   /* ---------------- 示例数据 ---------------- */
   function seed() {
     if (Meta.get('seeded')) return;
@@ -476,7 +458,7 @@
     Stock: Stock, Reading: Reading, Report: Report,
     Search: Search, Backup: Backup, Meta: Meta,
     CATEGORIES: CATEGORIES, STATUS: STATUS,
-    uid: uid, seed: seed, compressImage: compressImage,
+    uid: uid, seed: seed,
     daysBetween: daysBetween, ymOf: ymOf
   };
 })(window);

@@ -57,35 +57,22 @@
 .segment button.on { color: #16305C; background: #fff; box-shadow: var(--sh-1); }
 
 /* ---------------- 书籍列表项 ---------------- */
-.book-list { display: flex; flex-direction: column; gap: 10px; }
+.book-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.rp-card .book-list { display: flex; flex-direction: column; gap: 10px; }
 .book-item {
-  display: flex; gap: 12px; padding: 12px; border-radius: var(--r-l);
+  display: flex; flex-direction: column; gap: 7px; padding: 13px 13px 12px; border-radius: var(--r-l);
   background: var(--grad-card); border: 1px solid rgba(255,255,255,.9);
   box-shadow: var(--sh-1); cursor: pointer;
   transition: transform var(--dur-fast) var(--ease-mi), box-shadow var(--dur);
   animation: fadeUp .3s var(--ease-out) backwards;
 }
-.book-item:active { transform: scale(.985); box-shadow: var(--sh-2); }
+.book-item:active { transform: scale(.97); box-shadow: var(--sh-2); }
 
-.cover {
-  width: 58px; height: 78px; flex: none; border-radius: 10px;
-  background: var(--grad-main-soft); overflow: hidden; position: relative;
-  box-shadow: 0 3px 10px rgba(96,128,184,.16);
-}
-.cover img { width: 100%; height: 100%; object-fit: cover; }
-.cover .ph {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 19px; font-weight: 800; color: rgba(255,255,255,.95);
-  background: var(--grad-btn); letter-spacing: -.5px;
-}
-.cover.lg { width: 92px; height: 124px; border-radius: 14px; }
-.cover.sm { width: 42px; height: 56px; border-radius: 8px; }
-.cover.sm .ph { font-size: 15px; }
 
-.bi-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bi-main { display: flex; flex-direction: column; width: 100%; }
 .bi-title {
   font-size: var(--fs-h3); font-weight: 700; color: var(--t1); line-height: 1.35;
-  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .bi-author { margin-top: 3px; font-size: var(--fs-sm); color: var(--t3); }
 .bi-meta {
@@ -198,17 +185,6 @@
 .star-picker .val { margin-left: 6px; font-size: var(--fs-h2); font-weight: 800; color: var(--star); }
 
 /* 封面上传 */
-.cover-upload { display: flex; gap: 14px; align-items: flex-start; }
-.cover-slot {
-  width: 92px; height: 124px; flex: none; border-radius: 14px; overflow: hidden;
-  position: relative; cursor: pointer;
-  background: rgba(255,255,255,.7); border: 1.5px dashed var(--blue-300);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; color: var(--t3); font-size: var(--fs-xs);
-}
-.cover-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.cover-slot svg { width: 22px; height: 22px; }
-.cover-ops { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
 
 /* ---------------- 弹层：底部动作表 ---------------- */
 .mask {
@@ -355,28 +331,3 @@ mark { background: rgba(255,180,215,.5); color: #C43B75; border-radius: 3px; pad
 .profile .pf-row div b { display: block; font-size: 19px; font-weight: 800; color: #1B2439; }
 .profile .pf-row div span { font-size: var(--fs-xs); color: rgba(27,36,57,.6); }
 
-/* ---------------- 裁剪器 ---------------- */
-.cropper {
-  position: absolute; inset: 0; z-index: 98; background: rgba(16, 22, 38, .96);
-  display: none; flex-direction: column;
-}
-.cropper.show { display: flex; animation: fadeIn var(--dur-fast); }
-.cropper-hd {
-  height: calc(var(--statusbar-h) + 8px); display: flex; align-items: flex-end;
-  justify-content: space-between; padding: 0 18px 6px; color: #fff; font-size: var(--fs-h3);
-}
-.cropper-hd b { font-weight: 600; }
-.cropper-hd span { cursor: pointer; opacity: .85; }
-.cropper-stage { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.cropper-stage canvas { touch-action: none; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-.cropper-ft { padding: 16px 24px calc(var(--gesture-h) + 20px); color: #fff; }
-.cropper-ft .zoom { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: var(--fs-sm); }
-.cropper-ft input[type=range] {
-  flex: 1; -webkit-appearance: none; height: 3px; border-radius: 3px;
-  background: linear-gradient(90deg, #93C6FF, #FFAED2);
-}
-.cropper-ft input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
-  background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.4);
-}
-.cropper-ft .tip { text-align: center; font-size: var(--fs-xs); opacity: .5; }

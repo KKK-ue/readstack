@@ -195,7 +195,6 @@
         return (b.finishDate || '').localeCompare(a.finishDate || '');
       }).map(function (b) {
         return '<div class="book-item" style="padding:8px" data-open-read="' + b.id + '">' +
-          Views.coverHTML(b, 'sm') +
           '<div class="bi-main"><div class="bi-title">' + esc(b.title) + '</div>' +
           '<div class="bi-author">' + esc(b.author || '佚名') + '</div>' +
           '<div class="bi-meta">' + UI.starsHTML(b.rating) + '<span>' + Views.fmtDate(b.finishDate) + '</span>' +
@@ -257,7 +256,6 @@
       h += '<div class="rp-card"><h4>年度高分书单<span class="unit">4 星及以上</span></h4>' +
         '<div class="book-list">' + top.map(function (b) {
           return '<div class="book-item" style="padding:8px" data-open-read="' + b.id + '">' +
-            Views.coverHTML(b, 'sm') +
             '<div class="bi-main"><div class="bi-title">' + esc(b.title) + '</div>' +
             '<div class="bi-author">' + esc(b.author || '佚名') + '</div>' +
             '<div class="bi-meta">' + UI.starsHTML(b.rating) + '<span class="tag">' + esc(b.category) + '</span></div></div>' +

@@ -14,14 +14,6 @@
   var ST_MAP = { unread: ['unread', '未读'], reading: ['reading', '在读'], done: ['done', '已读'], drop: ['drop', '弃读'] };
   var SRC_MAP = { paper: '纸质书', ebook: '电子书', audio: '有声书' };
 
-  function coverHTML(b, cls) {
-    var c = 'cover' + (cls ? ' ' + cls : '');
-    if (b.cover) return '<div class="' + c + '"><img src="' + b.cover + '" alt=""></div>';
-    var ch = (b.title || '书').trim().charAt(0);
-    return '<div class="' + c + '"><span class="ph">' + esc(ch) + '</span></div>';
-  }
-  Views.coverHTML = coverHTML;
-
   function fmtDate(d) { return d ? d.replace(/-/g, '.') : '—'; }
 
   /* ============================================================
@@ -30,7 +22,6 @@
   Views.stockItemHTML = function (b, kw) {
     var st = ST_MAP[b.status] || ST_MAP.unread;
     return '<div class="book-item" data-open-stock="' + b.id + '">' +
-      coverHTML(b) +
       '<div class="bi-main">' +
         '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
         '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>' +
@@ -79,7 +70,7 @@
               return Views.stockItemHTML(b).replace('class="book-item"', 'class="book-item" style="animation-delay:' + Math.min(i * 22, 240) + 'ms"');
             }).join('') + '</div>'
           : emptyHTML('📚', '这里还没有书', f.status === 'all' && f.cat === 'all'
-              ? '点右下角 + 登记第一本实体书<br>书名、作者、价格、封面都能记'
+              ? '点右下角 + 登记第一本实体书<br>书名、作者、价格都能记'
               : '当前筛选条件下没有匹配的书籍')) +
       '</div>';
 
@@ -124,7 +115,6 @@
   Views.readingItemHTML = function (b, kw) {
     var days = RS.daysBetween(b.startDate, b.finishDate);
     return '<div class="book-item" data-open-read="' + b.id + '">' +
-      coverHTML(b) +
       '<div class="bi-main">' +
         '<div class="bi-title">' + App.hl(b.title, kw) + '</div>' +
         '<div class="bi-author">' + App.hl(b.author || '佚名', kw) + '</div>' +
@@ -135,8 +125,6 @@
           (days ? '<span>' + days + '天</span>' : '') +
           ((b.excerpts || []).length ? '<span>摘抄' + b.excerpts.length + '</span>' : '') +
         '</div>' +
-      '</div>' +
-      (b.rating ? '<div class="bi-right"><span class="bi-score">' + b.rating + '.0</span></div>' : '') +
       '</div>';
   };
 
@@ -234,7 +222,7 @@
     var st = ST_MAP[b.status] || ST_MAP.unread;
 
     var body =
-      '<div class="detail-head">' + coverHTML(b, 'lg') +
+      '<div class="detail-head">' +
         '<div class="info"><h2>' + esc(b.title) + '</h2>' +
         '<div class="au">' + esc(b.author || '佚名') + '</div>' +
         '<div class="row"><span class="pill ' + st[0] + '">' + st[1] + '</span><span class="tag">' + esc(b.category) + '</span></div>' +
@@ -283,12 +271,12 @@
     $('[data-toread]', v.el).onclick = function () {
       UI.confirm({
         title: '生成阅读记录', ok: '一次性填充',
-        text: '将把书名、作者、分类、封面复制到一条新的阅读记录中。复制后两条记录完全独立，之后修改任意一方都不会影响另一方。'
+        text: '将把书名、作者、分类复制到一条新的阅读记录中。复制后两条记录完全独立，之后修改任意一方都不会影响另一方。'
       }).then(function (ok) {
         if (!ok) return;
         App.popView();
         setTimeout(function () {
-          Views.openReadingForm(null, { title: b.title, author: b.author, category: b.category, cover: b.cover });
+          Views.openReadingForm(null, { title: b.title, author: b.author, category: b.category });
         }, 240);
       });
     };
@@ -330,7 +318,7 @@
     var days = RS.daysBetween(b.startDate, b.finishDate);
 
     var body =
-      '<div class="detail-head">' + coverHTML(b, 'lg') +
+      '<div class="detail-head">' +
         '<div class="info"><h2>' + esc(b.title) + '</h2>' +
         '<div class="au">' + esc(b.author || '佚名') + '</div>' +
         '<div class="row">' + UI.starsHTML(b.rating, 16) +
