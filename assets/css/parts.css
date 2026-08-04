@@ -71,13 +71,13 @@
   animation: fadeUp .3s var(--ease-out) backwards;
 }
 .book-list.rows .book-item:active { transform: scale(.985); box-shadow: var(--sh-2); }
-.book-list.rows .bi-main { display: flex; flex-direction: row; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+.book-list.rows .bi-main { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; flex: 1; min-width: 0; }
 .book-list.rows .bi-title {
-  flex: 1 1 auto; min-width: 0;
+  min-width: 0; display: block; -webkit-line-clamp: initial; -webkit-box-orient: initial;
   font-size: var(--fs-h3); font-weight: 700; color: var(--t1); line-height: 1.4; letter-spacing: .1px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.book-list.rows .bi-side { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 0; max-width: 46%; }
+.book-list.rows .bi-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 0; max-width: 45%; }
 .book-list.rows .bi-author { font-size: var(--fs-sm); color: var(--t3); line-height: 1.4; white-space: nowrap; max-width: 175px; overflow: hidden; text-overflow: ellipsis; }
 .book-list.rows .bi-meta {
   display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end;
