@@ -1,0 +1,147 @@
+/* ============================================================
+   阅栈 ReadStack · 数据报告与图表
+   ============================================================ */
+
+.rp-switch { display: flex; gap: 8px; padding: 0 var(--gap) 14px; }
+.rp-switch button {
+  flex: 1; height: 34px; border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: 600;
+  color: var(--t2); background: rgba(255,255,255,.72); border: 1px solid var(--line); cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-mi);
+}
+.rp-switch button.on { color: #16305C; background: var(--grad-btn); border-color: transparent; box-shadow: var(--sh-blue); }
+
+/* 周期选择器 */
+.period {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 0 var(--gap) 14px; padding: 8px 10px; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.74); border: 1px solid var(--line);
+}
+.period button {
+  width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: var(--t2); cursor: pointer;
+}
+.period button:disabled { opacity: .25; }
+.period button svg { width: 15px; height: 15px; }
+.period b { font-size: var(--fs-h2); font-weight: 700; letter-spacing: -.2px; }
+
+/* 报告卡片容器 */
+.rp-card {
+  margin: 0 var(--gap) 14px; padding: 16px; border-radius: var(--r-xl);
+  background: var(--grad-card); border: 1px solid rgba(255,255,255,.9); box-shadow: var(--sh-2);
+  animation: fadeUp .34s var(--ease-out) backwards;
+}
+.rp-card > h4 {
+  font-size: var(--fs-h2); font-weight: 700; margin-bottom: 3px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rp-card > h4 .unit { font-size: var(--fs-xs); font-weight: 500; color: var(--t4); }
+.rp-card > .desc { font-size: var(--fs-xs); color: var(--t3); margin-bottom: 14px; line-height: 1.6; }
+
+/* 核心指标 hero */
+.rp-hero {
+  margin: 0 var(--gap) 14px; padding: 20px; border-radius: var(--r-xl);
+  background: var(--grad-main); box-shadow: var(--sh-2); position: relative; overflow: hidden;
+}
+.rp-hero::before {
+  content: ""; position: absolute; right: -46px; bottom: -60px; width: 170px; height: 170px;
+  border-radius: 50%; background: rgba(255,255,255,.20);
+}
+.rp-hero .lb { font-size: var(--fs-sm); color: rgba(27,36,57,.66); position: relative; }
+.rp-hero .big {
+  font-size: 44px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.05;
+  color: #1B2439; position: relative; margin-top: 2px;
+}
+.rp-hero .big i { font-style: normal; font-size: 15px; font-weight: 600; margin-left: 4px; color: rgba(27,36,57,.66); }
+.rp-hero .grid {
+  position: relative; margin-top: 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.rp-hero .grid div {
+  background: rgba(255,255,255,.44); border-radius: var(--r-s); padding: 9px 8px; text-align: center;
+}
+.rp-hero .grid b { display: block; font-size: 17px; font-weight: 800; color: #1B2439; letter-spacing: -.4px; }
+.rp-hero .grid span { font-size: 10.5px; color: rgba(27,36,57,.6); }
+
+/* 环形图 + 图例 */
+.donut-wrap { display: flex; align-items: center; gap: 16px; }
+.donut-wrap svg { flex: none; }
+.legend { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); }
+.legend-item .dot { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+.legend-item .nm { flex: 1; min-width: 0; color: var(--t2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend-item .vl { color: var(--t1); font-weight: 700; }
+.legend-item .pc { color: var(--t4); font-size: var(--fs-xs); width: 34px; text-align: right; }
+
+/* 排行条 */
+.rank-list { display: flex; flex-direction: column; gap: 11px; }
+.rank-item { display: flex; align-items: center; gap: 10px; }
+.rank-no {
+  width: 20px; height: 20px; flex: none; border-radius: 7px; font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; color: var(--t3);
+  background: rgba(140,166,201,.14);
+}
+.rank-item:nth-child(1) .rank-no { color: #fff; background: linear-gradient(135deg, #7FB6FF, #FFA6CC); }
+.rank-item:nth-child(2) .rank-no { color: #fff; background: linear-gradient(135deg, #A9CDFF, #FFC7E1); }
+.rank-item:nth-child(3) .rank-no { color: #fff; background: linear-gradient(135deg, #C6DDFF, #FFDCEB); }
+.rank-body { flex: 1; min-width: 0; }
+.rank-body .top { display: flex; justify-content: space-between; font-size: var(--fs-sm); margin-bottom: 5px; }
+.rank-body .top .nm { color: var(--t1); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px; }
+.rank-body .top .vl { color: var(--t3); flex: none; }
+.rank-bar { height: 6px; border-radius: 3px; background: rgba(140,166,201,.12); overflow: hidden; }
+.rank-bar i { display: block; height: 100%; border-radius: 3px; background: var(--grad-btn); transition: width .5s var(--ease-out); }
+
+/* 阅读日历热力图 */
+.heat { display: flex; flex-direction: column; gap: 4px; }
+.heat-row { display: flex; gap: 4px; }
+.heat-cell { flex: 1; aspect-ratio: 1; border-radius: 4px; background: rgba(140,166,201,.10); position: relative; }
+.heat-cell.l1 { background: rgba(147,198,255,.42); }
+.heat-cell.l2 { background: rgba(147,198,255,.75); }
+.heat-cell.l3 { background: linear-gradient(135deg, #93C6FF, #C6B6FF); }
+.heat-cell.l4 { background: linear-gradient(135deg, #A78CF0, #FF9EC8); }
+.heat-cell.out { background: transparent; }
+.heat-wk { display: flex; gap: 4px; margin-bottom: 6px; }
+.heat-wk span { flex: 1; text-align: center; font-size: 9.5px; color: var(--t4); }
+.heat-legend { display: flex; align-items: center; justify-content: flex-end; gap: 5px; margin-top: 10px; font-size: 10px; color: var(--t4); }
+.heat-legend i { width: 10px; height: 10px; border-radius: 3px; display: block; }
+
+/* 偏好分析 */
+.insight {
+  margin: 0 var(--gap) 14px; padding: 18px; border-radius: var(--r-xl);
+  background: linear-gradient(150deg, #FFF6FA 0%, #F4F7FF 100%);
+  border: 1px solid rgba(255,255,255,.95); box-shadow: var(--sh-2);
+  position: relative; overflow: hidden;
+}
+.insight h4 {
+  font-size: var(--fs-h2); font-weight: 700; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 7px;
+}
+.insight h4 .badge {
+  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: var(--r-pill);
+  background: var(--grad-btn); color: #16305C;
+}
+.insight p {
+  font-size: var(--fs-body); line-height: var(--lh-body); color: var(--t2);
+  margin-bottom: 10px;
+}
+.insight p:last-child { margin-bottom: 0; }
+.insight p b { color: #4B7FD6; font-weight: 700; }
+.insight p em { font-style: normal; color: #E0729C; font-weight: 700; }
+.kw-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+.kw {
+  font-size: var(--fs-sm); font-weight: 600; padding: 5px 12px; border-radius: var(--r-pill);
+  background: rgba(255,255,255,.9); color: var(--t2); border: 1px solid var(--line);
+}
+.kw.hot { background: var(--grad-btn); color: #16305C; border-color: transparent; }
+
+/* 空数据提示 */
+.rp-empty {
+  margin: 0 var(--gap) 14px; padding: 34px 20px; text-align: center;
+  border-radius: var(--r-xl); background: rgba(255,255,255,.6);
+  border: 1px dashed var(--line); color: var(--t4); font-size: var(--fs-sm); line-height: 1.7;
+}
+
+/* 图表通用文字 */
+.chart-x { display: flex; margin-top: 7px; }
+.chart-x span { flex: 1; text-align: center; font-size: 9.5px; color: var(--t4); }
+.bar-tip {
+  font-size: 9.5px; color: var(--t3); text-align: center; font-weight: 600;
+}
