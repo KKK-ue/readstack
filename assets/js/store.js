@@ -544,11 +544,86 @@
     Meta.set('seeded', true);
   }
 
+  /* ---------------- 文本识别：多行书籍信息 → 结构化字段 ----------------
+     每行一本书，字段用 空格/逗号/制表符/顿号/分号 隔开。
+     智能识别：书名号《》、作者、分类、¥价格/元、页数、评分(5星)、
+     日期(YYYY-MM-DD/YYYY年M月D日)、状态词(未读/在读/已读/弃读)。 */
+  var TI_STATUS = { '未读': 'unread', '想读': 'unread', '在读': 'reading', '正在读': 'reading', '已读': 'done', '读完': 'done', '读过': 'done', '弃读': 'drop' };
+
+  function tiStripMarks(s) {
+    return String(s || '').replace(/^[《「『"'\s]+|[》」』"'\s]+$/g, '').trim();
+  }
+  function tiPad(n) { n = String(n); return n.length < 2 ? '0' + n : n; }
+  function tiMatchCategory(t) {
+    if (CATEGORIES.indexOf(t) >= 0) return t;
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      var c = CATEGORIES[i];
+      if (c === '其他') continue;
+      if (t.indexOf(c) >= 0) return c;                 // 文学类 → 文学
+      if (t.length >= 2 && c.indexOf(t) >= 0) return c; // 历史 → 历史
+    }
+    return '';
+  }
+  function tiTokens(line) {
+    line = String(line);
+    var hasSpace = /[\s]/.test(line);
+    // 有空白 → 只按空白切（书名内的 、，原样保留）；
+    // 无空白但有逗号类符号 → 按 、，,；; 切（兼容 Excel 无空格逗号分隔）。
+    var raw = hasSpace ? line.split(/\s+/) : line.split(/[、，,；;|]+/);
+    return raw.map(function (s) { return s.replace(/^[、，,；;|]+|[、，,；;|]+$/g, '').trim(); }).filter(Boolean);
+  }
+  function tiParseLine(line) {
+    // 不用 · 作分隔（作者名含 ·，如 加西亚·马尔克斯）
+    var tokens = tiTokens(line);
+    if (!tokens.length) return null;
+    var it = { title: '', author: '', category: '', publisher: '', price: 0, pages: 0, status: '', rating: 0, date: '', note: '' };
+    it.title = tiStripMarks(tokens.shift());
+    tokens.forEach(function (tok) {
+      var t = tok; var m;
+      if (!t) return;
+      if (TI_STATUS[t]) { it.status = TI_STATUS[t]; return; }
+      var cat = tiMatchCategory(t);
+      if (cat) { it.category = cat; return; }
+      m = t.match(/^(?:评分|rate)?\s*([0-5](?:\.\d)?)\s*[星★]$/i) || t.match(/^[★]([0-5])$/);
+      if (m) { it.rating = Math.min(5, Math.round(parseFloat(m[1]))); return; }
+      m = t.match(/^[¥￥]\s*(\d+(?:\.\d+)?)$/) || t.match(/^(\d+(?:\.\d+)?)\s*元$/);
+      if (m) { it.price = parseFloat(m[1]); return; }
+      m = t.match(/^(\d+)\s*页$/);
+      if (m) { it.pages = parseInt(m[1], 10); return; }
+      m = t.match(/^(\d{4})[-/年.](\d{1,2})[-/月.](\d{1,2})日?$/);
+      if (m) { it.date = m[1] + '-' + tiPad(m[2]) + '-' + tiPad(m[3]); return; }
+      if (/出版社|出版公司|书局|书社|印书馆|传媒|出版集团/.test(t)) { it.publisher = t; return; }
+      if (/^\d+(\.\d+)?$/.test(t)) { // 裸数字：先作价格，已有价格则作页数
+        if (!it.price) it.price = parseFloat(t);
+        else if (!it.pages) it.pages = parseInt(t, 10);
+        return;
+      }
+      if (!it.author) it.author = t;
+      else it.note = it.note ? it.note + ' ' + t : t;
+    });
+    return it.title ? it : null;
+  }
+  function parseBookText(text) {
+    var lines = String(text || '').split(/\r?\n/);
+    var out = [];
+    lines.forEach(function (raw, idx) {
+      var line = String(raw).trim();
+      if (!line) return;
+      // 跳过表头行：首个字段恰为"书名/书籍/title"等
+      var first = tiTokens(line)[0] || '';
+      if (idx === 0 && /^(书名|书籍|书籍名|title|book)$/i.test(first)) return;
+      var it = tiParseLine(line);
+      if (it) out.push(it);
+    });
+    return out;
+  }
+
   global.RS = {
     Stock: Stock, Reading: Reading, Report: Report,
     Search: Search, Backup: Backup, Meta: Meta,
     CATEGORIES: CATEGORIES, STATUS: STATUS,
     uid: uid, seed: seed,
-    daysBetween: daysBetween, ymOf: ymOf
+    daysBetween: daysBetween, ymOf: ymOf,
+    parseBookText: parseBookText
   };
 })(window);

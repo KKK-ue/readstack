@@ -116,6 +116,46 @@
   padding: 2px 8px; border-radius: var(--r-pill); font-weight: 600;
 }
 
+/* ---------------- 文本识别批量录入 ---------------- */
+.ti-hint {
+  font-size: var(--fs-xs); color: var(--t3); line-height: 1.75;
+  background: var(--grad-pill); border-radius: var(--r-m);
+  padding: 11px 13px; margin-bottom: 12px;
+}
+.ti-hint b { color: var(--t2); font-weight: 600; }
+.ti-hint code {
+  display: block; margin-top: 5px; font-family: inherit;
+  color: var(--t1); background: rgba(255,255,255,.72);
+  padding: 4px 8px; border-radius: 8px; font-size: 11.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#ti-text { min-height: 150px; max-height: 210px; }
+.ti-count { font-size: var(--fs-sm); color: var(--t2); margin: 14px 2px 9px; font-weight: 600; }
+.ti-count b { color: var(--t1); }
+.ti-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--grad-card); border: 1px solid rgba(255,255,255,.9);
+  border-radius: var(--r-m); padding: 10px 12px; margin-bottom: 8px;
+  box-shadow: var(--sh-1); animation: fadeUp .25s var(--ease-out) backwards;
+}
+.ti-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ti-main b {
+  font-size: var(--fs-h3); color: var(--t1); font-weight: 700; line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ti-main span {
+  font-size: var(--fs-xs); color: var(--t3); line-height: 1.35;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ti-del {
+  flex: none; width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--t3); background: rgba(0,0,0,.05); cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+.ti-del:active { background: rgba(224,114,156,.18); color: #E0729C; }
+.ti-del svg { width: 14px; height: 14px; }
+
 /* ---------------- 摘抄卡片 ---------------- */
 .quote-card {
   padding: 15px 16px; border-radius: var(--r-l); position: relative; overflow: hidden;

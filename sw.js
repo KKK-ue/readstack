@@ -1,5 +1,5 @@
 /* 阅栈 ReadStack · Service Worker（离线缓存 App Shell） */
-const CACHE = 'readstack-v2';
+const CACHE = 'readstack-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
   './assets/js/ui.js',
   './assets/js/views.js',
   './assets/js/forms.js',
+  './assets/js/textimport.js',
   './assets/js/report.js',
   './assets/js/app.js',
   './assets/icons/icon-192.png',

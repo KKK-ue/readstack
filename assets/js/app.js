@@ -480,8 +480,15 @@
     $('#btnSearch').onclick = function () { UI.haptic(); openSearch(); };
     $('#fab').onclick = function () {
       UI.haptic(16);
-      if (App.tab === 'reading') Views.openReadingForm(null);
-      else Views.openStockForm(null);
+      var isReading = App.tab === 'reading';
+      UI.actionSheet(isReading ? '登记阅读记录' : '登记藏书', [
+        { key: 'single', text: '单本登记', icon: 'edit' },
+        { key: 'text', text: '文本识别批量录入', icon: 'search' }
+      ]).then(function (k) {
+        if (!k) return;
+        if (k === 'text') { Views.openTextImport(isReading ? 'reading' : 'stock'); return; }
+        if (isReading) Views.openReadingForm(null); else Views.openStockForm(null);
+      });
     };
     $('#btnHdMore').onclick = function () { Views.openSortSheet(); };
 
