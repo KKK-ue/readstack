@@ -315,6 +315,22 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 3000);
   }
 
+  /* 共享的文件选择器：挂到 DOM 并复用。
+     安卓 WebView 的两个坑在此规避：
+     ① 部分机型要求 file input 必须在 DOM 树中才能弹出选择框并回调 onchange（detached input 无效）；
+     ② 过严的 accept 会让系统文件管理器把 .xlsx 灰显/隐藏，用户选不到自己的备份 → 放宽为全部类型，选中后 JS 校验。 */
+  var _filePicker = null;
+  function getFilePicker() {
+    if (!_filePicker) {
+      _filePicker = document.createElement('input');
+      _filePicker.type = 'file';
+      _filePicker.accept = '*/*';
+      _filePicker.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;';
+      document.body.appendChild(_filePicker);
+    }
+    return _filePicker;
+  }
+
   function onSetting(key) {
     UI.haptic();
     if (key === 'install') {
@@ -352,25 +368,24 @@
         { key: 'cover', text: '覆盖导入（清空后写入）', icon: 'upload', danger: true }
       ]).then(function (mode) {
         if (!mode) return;
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.json,application/json';
+        var input = getFilePicker();
+        input.value = ''; // 允许重复选择同一文件也触发 change
         input.onchange = function () {
-          var f = input.files[0]; if (!f) return;
-          var isXlsx = /\.xlsx?$/i.test(f.name) || (f.type && f.type.indexOf('spreadsheetml') >= 0);
+          var f = input.files && input.files[0]; if (!f) return;
           var finish = function (c) { UI.toast('已恢复 ' + c.stock + ' 条库存 / ' + c.reading + ' 条阅读'); renderMe(); };
           var fail = function (msg) { UI.toast('恢复失败：' + msg); };
-          if (isXlsx) {
-            var fr = new FileReader();
-            fr.onload = function () { try { finish(RS.Backup.importExcel(fr.result, mode)); } catch (e) { fail(e.message); } };
-            fr.onerror = function () { fail('文件读取失败'); };
-            fr.readAsArrayBuffer(f);
-          } else {
-            var fr2 = new FileReader();
-            fr2.onload = function () { try { finish(RS.Backup.import(fr2.result, mode)); } catch (e) { fail(e.message); } };
-            fr2.onerror = function () { fail('文件读取失败'); };
-            fr2.readAsText(f);
-          }
+          var isXlsx = /\.xlsx?$/i.test(f.name) || (f.type && f.type.indexOf('spreadsheetml') >= 0);
+          var isJson = /\.json$/i.test(f.name) || (f.type && f.type.indexOf('json') >= 0);
+          if (!isXlsx && !isJson) { fail('请选择 .xlsx 或 .json 备份文件'); return; }
+          var fr = new FileReader();
+          fr.onload = function () {
+            try {
+              var r = isXlsx ? RS.Backup.importExcel(fr.result, mode) : RS.Backup.import(fr.result, mode);
+              finish(r);
+            } catch (e) { fail(e.message); }
+          };
+          fr.onerror = function () { fail('文件读取失败'); };
+          if (isXlsx) fr.readAsArrayBuffer(f); else fr.readAsText(f);
           input.value = '';
         };
         input.click();
